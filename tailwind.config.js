@@ -8,6 +8,11 @@ export default {
   theme: {
     extend: {
       colors: {
+        "yellow-main": "#FFD320",
+        "progress-green": "#27AE60",
+        "progress-yellow": "#F1C40F",
+        "progress-orange": "#D35400",
+        "progress-red": "#E74C3C",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
