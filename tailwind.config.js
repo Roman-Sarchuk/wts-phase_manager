@@ -52,6 +52,11 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      fontFamily: {
+          marvin: ['"Marvin"', 'sans-serif'],
+          'marvin-round': ['"MarvinRound"', 'sans-serif'],
+          smack: ['"SmackAttack"', 'sans-serif'],
+        },
     },
   },
   plugins: [],

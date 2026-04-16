@@ -3,6 +3,30 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'Marvin';
+  src: url('/fonts/Marvin.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'MarvinRound';
+  src: url('/fonts/Marvin-Round.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SmackAttack';
+  src: url('/fonts/v_SmackAttack_BB.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 @layer base {
   .theme {
     --font-heading: var(--font-sans);
