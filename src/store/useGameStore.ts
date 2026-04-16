@@ -24,10 +24,9 @@ export interface Phase {
 }
 
 const BASIC_PHASE_ORDER = ["team", "actions", "diplomacy", "endOfTurn"] as const;
-const SPECIAL_PHASE_IDS = ["preparation", "introduction", "summary", "break"] as const;
 
 type BasicPhaseId = (typeof BASIC_PHASE_ORDER)[number];
-type SpecialPhaseId = (typeof SPECIAL_PHASE_IDS)[number];
+type SpecialPhaseId = "preparation" | "introduction" | "summary" | "break";
 type PhaseId = BasicPhaseId | SpecialPhaseId;
 
 type StrictPhaseMap = {
