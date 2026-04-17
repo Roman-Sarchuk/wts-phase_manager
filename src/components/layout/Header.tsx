@@ -1,4 +1,4 @@
-import { act, useState } from "react";
+import { useEffect, useState } from "react";
 import logoWts from "@/assets/logo-wts.png";
 import logoDicecon from "@/assets/logo-dicecon.png";
 import { useGameStore, SPECIAL_PHASES, PHASES } from "@/store/useGameStore";
@@ -17,6 +17,21 @@ function Header() {
   } = useGameStore();
   const [activeMenu, setActiveMenu] = useState<MenuType>(null);
   const [activeSubMenu, setActiveSubMenu] = useState<boolean>(false);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setActiveMenu(null);
+        setActiveSubMenu(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
 
   const toggleMenu = (menu: MenuType) => {
     setActiveMenu(activeMenu === menu ? null : menu);
