@@ -24,9 +24,10 @@ export interface Phase {
 }
 
 const BASIC_PHASE_ORDER = ["team", "actions", "diplomacy", "endOfTurn"] as const;
+export const SPECIAL_PHASES = ["preparation", "introduction", "summary", "break"] as const;
 
 type BasicPhaseId = (typeof BASIC_PHASE_ORDER)[number];
-type SpecialPhaseId = "preparation" | "introduction" | "summary" | "break";
+type SpecialPhaseId = (typeof SPECIAL_PHASES)[number];
 type PhaseId = BasicPhaseId | SpecialPhaseId;
 
 type StrictPhaseMap = {
@@ -46,7 +47,7 @@ export const PHASES = {
     durationSeconds: 480, // 8 minutes
     color: {
       background: "bg-[#2ECC71]",
-      text: "text-[#000000]",
+      text: "text-black",
     },
   },
   actions: {
@@ -57,7 +58,7 @@ export const PHASES = {
     durationSeconds: 900, // 15 minutes
     color: {
       background: "bg-[#E67E22]",
-      text: "text-[#000000]",
+      text: "text-black",
     },
   },
   diplomacy: {
@@ -68,7 +69,7 @@ export const PHASES = {
     durationSeconds: 480, // 8 minutes
     color: {
       background: "bg-[#8E44AD]",
-      text: "text-[#FFFFFF]",
+      text: "text-white",
     },
   },
   endOfTurn: {
@@ -79,7 +80,7 @@ export const PHASES = {
     durationSeconds: 240, // 4 minutes
     color: {
       background: "bg-[#C0392B]",
-      text: "text-[#FFFFFF]",
+      text: "text-white",
     },
   },
   // Special phases
@@ -102,7 +103,7 @@ export const PHASES = {
     durationSeconds: null,
     color: {
       background: "bg-[#2F3542]",
-      text: "text-[#FFFFFF]",
+      text: "text-white",
     },
   },
   summary: {
@@ -113,7 +114,7 @@ export const PHASES = {
     durationSeconds: null,
     color: {
       background: "bg-[#464C59]",
-      text: "text-[#FFFFFF]",
+      text: "text-white",
     },
   },
   break: {
@@ -124,7 +125,7 @@ export const PHASES = {
     durationSeconds: null,
     color: {
       background: "bg-[#3498DB]",
-      text: "text-[#FFFFFF]",
+      text: "text-white",
     },
   },
 } satisfies StrictPhaseMap;
@@ -199,6 +200,8 @@ export const useGameStore = create<GameState>()(
         let prevIndex = currentIndex - 1;
 
         if (prevIndex < 0) {
+          if (state.round <= 1)
+            return; // Do not allow going to previous phase if it's already the first round
           state.decrementRound();
           prevIndex =
             (prevIndex + BASIC_PHASE_ORDER.length) % BASIC_PHASE_ORDER.length;
