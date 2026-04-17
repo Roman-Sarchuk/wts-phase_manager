@@ -48,9 +48,24 @@ function Header() {
   const maxTimer = activePhase.durationSeconds;
   const isTimerEnabled = activePhase.durationSeconds !== null;
 
+  const toggleSubMenu = (subMenu: SubMenuType) => {
+    const nextSubMenu = activeSubMenu === subMenu ? null : subMenu;
+    setActiveSubMenu(nextSubMenu);
+
+    if (nextSubMenu === "setTitle") {
+      setTitleInput(activePhase.name);
+      setTitleError(null);
+    }
+
+    if (nextSubMenu === "setDescription") {
+      setDescriptionInput(activePhase.description ?? "");
+      setDescriptionError(null);
+    }
+  };
+
   const toggleMenu = (menu: MenuType) => {
-    setActiveMenu(activeMenu === menu ? null : menu);
-    toggleSubMenu(null);
+    setActiveMenu((currentMenu) => (currentMenu === menu ? null : menu));
+    setActiveSubMenu(null);
   };
 
   useEffect(() => {
@@ -68,25 +83,33 @@ function Header() {
       }
 
       if (event.key === "Escape") {
-        toggleMenu(null);
+        setActiveMenu(null);
+        setActiveSubMenu(null);
         return;
       }
 
       if (event.key === "1") {
-        toggleMenu("controls");
+        setActiveMenu((currentMenu) =>
+          currentMenu === "controls" ? null : "controls",
+        );
+        setActiveSubMenu(null);
         return;
       }
 
       if (event.key === "2") {
-        toggleMenu("timer");
+        setActiveMenu((currentMenu) => (currentMenu === "timer" ? null : "timer"));
+        setActiveSubMenu(null);
         return;
       }
 
       if (event.key === "3") {
-        toggleMenu("settings");
+        setActiveMenu((currentMenu) =>
+          currentMenu === "settings" ? null : "settings",
+        );
+        setActiveSubMenu(null);
       }
 
-      if (event.key === "P") {
+      if (event.key.toLowerCase() === "p") {
         toggleTimer();
       }
 
@@ -100,22 +123,7 @@ function Header() {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [toggleMenu]);
-
-  const toggleSubMenu = (subMenu: SubMenuType) => {
-    const nextSubMenu = activeSubMenu === subMenu ? null : subMenu;
-    setActiveSubMenu(nextSubMenu);
-
-    if (nextSubMenu === "setTitle") {
-      setTitleInput(activePhase.name);
-      setTitleError(null);
-    }
-
-    if (nextSubMenu === "setDescription") {
-      setDescriptionInput(activePhase.description ?? "");
-      setDescriptionError(null);
-    }
-  };
+  }, [nextBasicPhase, toggleTimer]);
 
   const parseTimeInput = (minutes: string, seconds: string) => {
     if (minutes.trim() === "") minutes = "0";
@@ -141,7 +149,7 @@ function Header() {
   };
 
   const handleAddLeftTime = () => {
-    let seconds = parseTimeInput(leftMinutesInput, leftSecondsInput);
+    const seconds = parseTimeInput(leftMinutesInput, leftSecondsInput);
 
     if (seconds === null) {
       setLeftTimeError("Введи коректні хвилини та секунди (0-59).");
