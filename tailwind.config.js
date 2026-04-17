@@ -8,6 +8,11 @@ export default {
   theme: {
     extend: {
       colors: {
+        "yellow-main": "#FFD320",
+        "progress-green": "#27AE60",
+        "progress-yellow": "#F1C40F",
+        "progress-orange": "#D35400",
+        "progress-red": "#E74C3C",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -47,6 +52,11 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      fontFamily: {
+          marvin: ['"Marvin"', 'sans-serif'],
+          'marvin-round': ['"MarvinRound"', 'sans-serif'],
+          smack: ['"SmackAttack"', 'sans-serif'],
+        },
     },
   },
   plugins: [],
