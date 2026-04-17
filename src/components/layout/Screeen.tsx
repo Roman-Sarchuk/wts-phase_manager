@@ -1,34 +1,23 @@
-import { type Phase } from "@/store/useGameStore";
-import { useEffect, useState } from "react";
+import { type Phase, useGameStore } from "@/store/useGameStore";
 
 interface ScreenProps {
   phase: Phase;
 }
 
 function Screen({ phase }: ScreenProps) {
-  const [elapsedSeconds, setElapsedSeconds] = useState(0);
-
-  useEffect(() => {
-    setElapsedSeconds(0);
-
-    const interval = setInterval(() => {
-      setElapsedSeconds((prev) => {
-        const newValue = prev + 1;
-        return phase.durationSeconds && newValue > phase.durationSeconds
-          ? phase.durationSeconds
-          : newValue;
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [phase.durationSeconds]);
+  const timeLeft = useGameStore((state) => state.timeLeft);
 
   const formatTime = (seconds: number) =>
     `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
 
-  const progressPercentage = phase.durationSeconds
-    ? 100 - (elapsedSeconds / phase.durationSeconds) * 100
-    : 0;
+  const phaseDuration = phase.durationSeconds;
+  const normalizedTimeLeft =
+    phaseDuration === null ? null : (timeLeft ?? phaseDuration);
+
+  const progressPercentage =
+    phaseDuration !== null && normalizedTimeLeft !== null && phaseDuration > 0
+      ? (normalizedTimeLeft / phaseDuration) * 100
+      : 0;
 
   const bgProgressColor =
     progressPercentage > 50
@@ -55,14 +44,13 @@ function Screen({ phase }: ScreenProps) {
             </p>
           )}
 
-          {phase.durationSeconds && (
+          {phase.durationSeconds !== null && normalizedTimeLeft !== null && (
             <div className="flex w-full flex-col items-center gap-3">
               <div className="flex w-full items-center justify-center">
                 <p
                   className={`${phase.color.text} text-center text-5xl`}
                 >
-                  {formatTime(elapsedSeconds)} /{" "}
-                  {formatTime(phase.durationSeconds)}
+                  {formatTime(normalizedTimeLeft)} / {formatTime(phase.durationSeconds)}
                 </p>
               </div>
 

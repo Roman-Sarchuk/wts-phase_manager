@@ -23,8 +23,18 @@ export interface Phase {
   };
 }
 
-const BASIC_PHASE_ORDER = ["team", "actions", "diplomacy", "endOfTurn"] as const;
-export const SPECIAL_PHASES = ["preparation", "introduction", "summary", "break"] as const;
+const BASIC_PHASE_ORDER = [
+  "team",
+  "actions",
+  "diplomacy",
+  "endOfTurn",
+] as const;
+export const SPECIAL_PHASES = [
+  "preparation",
+  "introduction",
+  "summary",
+  "break",
+] as const;
 
 type BasicPhaseId = (typeof BASIC_PHASE_ORDER)[number];
 type SpecialPhaseId = (typeof SPECIAL_PHASES)[number];
@@ -36,6 +46,7 @@ type StrictPhaseMap = {
 
 type BasicPhase = StrictPhaseMap[BasicPhaseId];
 type SpecialPhase = StrictPhaseMap[SpecialPhaseId];
+type PhaseUpdate = Partial<Omit<Phase, "id" | "type">>;
 
 export const PHASES = {
   // Basic phases
@@ -134,6 +145,7 @@ const INITIAL_SPECIAL_PHASE_ID: SpecialPhaseId = "preparation";
 
 interface GameState {
   // States
+  phases: StrictPhaseMap;
   currentBasePhase: BasicPhase;
   specialPhase: SpecialPhase | null; // Overlay basic phase when special phase is active, otherwise null
   timeLeft: number | null; // null means timer is not setted for the current phase
@@ -143,6 +155,7 @@ interface GameState {
 
   // Actions
   setBasicPhase: (phaseId: BasicPhaseId) => void;
+  updatePhase: (phaseId: PhaseId, updates: PhaseUpdate) => void;
   nextBasicPhase: () => void;
   prevBasicPhase: () => void;
 
@@ -153,6 +166,8 @@ interface GameState {
   incrementRound: () => void;
   decrementRound: () => void;
 
+  setCurrentPhaseTime: (seconds: number | null) => void;
+  setLeftTimer: (seconds: number) => void;
   toggleTimer: () => void;
   tick: () => void;
   // setSoundEnabled: (enabled: boolean) => void    // TODO: will be implemented in the future
@@ -162,19 +177,70 @@ export const useGameStore = create<GameState>()(
   persist(
     (set, get) => ({
       // States
+      phases: PHASES,
       currentBasePhase: PHASES[BASIC_PHASE_ORDER[0]],
       specialPhase: PHASES[INITIAL_SPECIAL_PHASE_ID],
-      timeLeft: null,
+      timeLeft: PHASES[BASIC_PHASE_ORDER[0]].durationSeconds,
       isRunning: false,
       round: 1,
       // soundEnabled: false,  // TODO: will be implemented in the future
 
       // Actions
       setBasicPhase: (phaseId) => {
+        const state = get();
+        const phase = state.phases[phaseId];
+
         set({
-          currentBasePhase: PHASES[phaseId],
-          timeLeft: PHASES[phaseId].durationSeconds,
+          currentBasePhase: phase,
+          timeLeft: phase.durationSeconds,
           isRunning: false,
+        });
+      },
+      updatePhase: (phaseId, updates) => {
+        set((state) => {
+          const nextPhase = {
+            ...state.phases[phaseId],
+            ...updates,
+            id: phaseId,
+          } as StrictPhaseMap[typeof phaseId];
+
+          const nextPhases = {
+            ...state.phases,
+            [phaseId]: nextPhase,
+          } as StrictPhaseMap;
+
+          const nextState: Partial<GameState> = {
+            phases: nextPhases,
+          };
+
+          const activePhaseId = state.specialPhase
+            ? state.specialPhase.id
+            : state.currentBasePhase.id;
+
+          if (state.currentBasePhase.id === phaseId) {
+            nextState.currentBasePhase = nextPhase as BasicPhase;
+          }
+
+          if (state.specialPhase?.id === phaseId) {
+            nextState.specialPhase = nextPhase as SpecialPhase;
+          }
+
+          if (
+            activePhaseId === phaseId &&
+            Object.prototype.hasOwnProperty.call(updates, "durationSeconds")
+          ) {
+            const duration = nextPhase.durationSeconds;
+
+            if (duration === null) {
+              nextState.timeLeft = null;
+            } else if (state.timeLeft === null) {
+              nextState.timeLeft = duration;
+            } else {
+              nextState.timeLeft = Math.min(state.timeLeft, duration);
+            }
+          }
+
+          return nextState;
         });
       },
       nextBasicPhase: () => {
@@ -200,8 +266,7 @@ export const useGameStore = create<GameState>()(
         let prevIndex = currentIndex - 1;
 
         if (prevIndex < 0) {
-          if (state.round <= 1)
-            return; // Do not allow going to previous phase if it's already the first round
+          if (state.round <= 1) return; // Do not allow going to previous phase if it's already the first round
           state.decrementRound();
           prevIndex =
             (prevIndex + BASIC_PHASE_ORDER.length) % BASIC_PHASE_ORDER.length;
@@ -211,8 +276,19 @@ export const useGameStore = create<GameState>()(
         state.setBasicPhase(prevId);
       },
 
+      setCurrentPhaseTime: (seconds) => {
+        if (seconds !== null && seconds < 0) return;
+
+        const state = get();
+
+        const phaseId = state.specialPhase
+          ? state.specialPhase.id
+          : state.currentBasePhase.id;
+        state.updatePhase(phaseId, { durationSeconds: seconds });
+      },
       showSpecialPhase: (phaseId) => {
-        set({ specialPhase: PHASES[phaseId] });
+        const state = get();
+        set({ specialPhase: state.phases[phaseId] });
       },
       closeSpecialPhase: () => {
         set({ specialPhase: null });
@@ -228,15 +304,43 @@ export const useGameStore = create<GameState>()(
         set((state) => ({ round: Math.max(1, state.round - 1) }));
       },
 
+      setLeftTimer: (seconds) => {
+        const state = get();
+        const activePhase = state.specialPhase ?? state.currentBasePhase;
+        const maxDuration = activePhase.durationSeconds;
+
+        if (maxDuration === null || state.timeLeft === null) return;
+
+        const nextTimeLeft = Math.max(0, Math.min(maxDuration, state.timeLeft + seconds));
+        set({ timeLeft: nextTimeLeft });
+      },
       toggleTimer: () => {
-        set((state) => ({ isRunning: !state.isRunning }));
+        set((state) => {
+          const activePhase = state.specialPhase ?? state.currentBasePhase;
+
+          if (activePhase.durationSeconds === null || state.timeLeft === null) {
+            return { isRunning: false };
+          }
+
+          if (state.timeLeft <= 0) {
+            return { isRunning: false };
+          }
+
+          return { isRunning: !state.isRunning };
+        });
       },
       tick: () => {
         const state = get();
 
-        if (state.isRunning && state.timeLeft !== null && state.timeLeft > 0) {
-          set({ timeLeft: state.timeLeft - 1 });
+        if (!state.isRunning || state.timeLeft === null) return;
+
+        if (state.timeLeft <= 0) {
+          set({ isRunning: false, timeLeft: 0 });
+          return;
         }
+
+        const nextTimeLeft = state.timeLeft - 1;
+        set({ timeLeft: nextTimeLeft, isRunning: nextTimeLeft > 0 });
       },
     }),
     {
@@ -244,6 +348,7 @@ export const useGameStore = create<GameState>()(
       name: "dicecon-phase-storage",
 
       partialize: (state) => ({
+        phases: state.phases,
         currentBasePhase: state.currentBasePhase,
         specialPhase: state.specialPhase,
         timeLeft: state.timeLeft,

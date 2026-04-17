@@ -1,23 +1,24 @@
-// import { useState } from 'react'
+import { useEffect } from "react";
 
 import "./App.css";
 import Header from "@/components/layout/Header";
 import Screen from "@/components/layout/Screeen";
-import { type Phase, useGameStore } from "./store/useGameStore";
+import { useGameStore } from "./store/useGameStore";
 
 function App() {
-  const phase: Phase = {
-    id: "team",
-    type: "basic",
-    name: "Фаза команди",
-    description: "Перерва до 15:00",
-    durationSeconds: 15,
-    color: {
-      background: "bg-green-400",
-      text: "text-[#000000]",
-    },
-  };
-  const { currentBasePhase, specialPhase } = useGameStore();
+  const { currentBasePhase, specialPhase, isRunning, tick } = useGameStore();
+
+  useEffect(() => {
+    if (!isRunning) return;
+
+    const intervalId = window.setInterval(() => {
+      tick();
+    }, 1000);
+
+    return () => {
+      window.clearInterval(intervalId);
+    };
+  }, [isRunning, tick]);
 
   return (
     <div className="flex min-h-screen w-full flex-col">
