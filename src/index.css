@@ -108,4 +108,14 @@
   html {
     @apply font-sans;
   }
+/* my styles */
+  h1 {
+    @apply font-marvin;
+  }
+  button {
+    @apply font-smack;
+  }
+  p {
+    @apply font-marvin-round;
+  }
 }
