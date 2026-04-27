@@ -1,73 +1,77 @@
-# React + TypeScript + Vite
+# WTS Phase Manager
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A focused single-page application (SPA) for managing game flow, round progression, and phase timing during live board-game sessions.
 
-Currently, two official plugins are available:
+The project is optimized for facilitator/operator usage with quick phase switching, configurable timers, and persistent session settings without the need for a backend.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Core Capabilities
 
-## React Compiler
+**Base Phase Cycle:** Pre-defined cycle (Team → Actions → Diplomacy → End of Turn) with automatic round increments.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+**Special Phase Overlays:** Non-cyclic screens for preparation, breaks, or briefings that temporarily override the main view.
 
-## Expanding the ESLint configuration
+**Live Timer Control:** Dynamic countdowns with visual progress bars, color thresholds (Green/Yellow/Orange/Red), and "Time's Up" alerts.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+**On-the-fly Configuration:** Edit phase names, descriptions, and durations directly during the session.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+**Persistent State:** All game data, including the current round and timer, survives page reloads via local storage.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Technology Stack
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- **Framework:** React 19 (TypeScript)
+- **Build Tool:** Vite 8
+- **State Management:** Zustand 5 with persist middleware
+- **Styling:** Tailwind CSS 3
+- **Icons:** Lucide React
+
+## Keyboard Shortcuts
+
+The application supports rapid control via hotkeys (when not typing in input fields):
+
+- **`1`** – Toggle Controls menu
+- **`2`** – Toggle Timer menu
+- **`3`** – Toggle Settings menu
+- **`P`** – Start/Pause timer
+- **`Enter`** – Move to the next base phase
+- **`Esc`** – Close any open menu
+
+## Project Structure
+
+```
+src/
+  components/
+    layout/      # Header (Controls) and Screen (Display)
+    ui/          # Reusable UI primitives
+  store/
+    useGameStore.ts # Core logic, timer ticking, and persistence
+  lib/
+    utils.ts     # Tailwind merging and utility functions
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Getting Started
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Prerequisites
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- Node.js 20+
+
+### Installation
+
+```bash
+npm install
 ```
+
+### Development
+
+```bash
+npm run dev
+```
+
+### Production Build
+
+```bash
+npm run build
+```
+
+## State & Persistence
+
+This is a purely client-side application. It uses a single Zustand store with a storage key: `dicecon-phase-storage`. There is no database synchronization; the state is tied to the specific browser instance where it is running.
