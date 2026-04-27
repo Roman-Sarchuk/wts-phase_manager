@@ -345,7 +345,7 @@ export const useGameStore = create<GameState>()(
     }),
     {
       // Persistence settings
-      name: "dicecon-phase-storage",
+      name: "wts-phase-storage",
 
       partialize: (state) => ({
         phases: state.phases,
