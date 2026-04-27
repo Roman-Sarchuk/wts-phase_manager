@@ -1,3 +1,4 @@
+[![CI Pipeline](https://github.com/Roman-Sarchuk/wts-phase_manager/actions/workflows/ci.yml/badge.svg)](https://github.com/Roman-Sarchuk/wts-phase_manager/actions/workflows/ci.yml)
 [![React](https://img.shields.io/badge/React-19.x-61DAFB?logo=react&logoColor=black)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-6.x-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Vite](https://img.shields.io/badge/Vite-8.x-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
