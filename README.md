@@ -15,13 +15,19 @@ The project is optimized for facilitator/operator usage with quick phase switchi
 
 ## 📸 Project Preview
 
-> 👉 **Add your screenshots here**
+> **Live demo:** https://wts-phase-manager.netlify.app/
 
-```
-[Screenshot of main phase display]
-[Screenshot of controls menu]
-[Screenshot of timer interface]
-```
+<img src="https://github.com/user-attachments/assets/73614e94-577b-46a3-9ee0-6a5892422206" width="100%">
+
+
+<br/>
+
+
+| | |
+| :-: | :-: |
+| <img src="https://github.com/user-attachments/assets/de509612-8362-4a5d-b63a-b1012984467b" width="100%"> | <img src="https://github.com/user-attachments/assets/f9efd355-bac3-4a12-8b9d-f683035acbff" width="100%"> |
+| <img src="https://github.com/user-attachments/assets/29695b3b-da06-489f-a54a-0da7eca1c8ad" width="100%"> | <img width="100%" alt="Main Screen" src="https://github.com/user-attachments/assets/7afadc26-a7d1-4ada-9550-39f9af88774c" /> |
+
 
 ---
 
