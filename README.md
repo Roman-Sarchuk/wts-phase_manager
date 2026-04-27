@@ -91,6 +91,7 @@ wts-phase_manager/
 │  └─ index.css                 # Tailwind + theme variables + custom fonts
 ├─ public/
 │  └─ fonts/                    # Local custom font assets
+├─ .env                         # Environment variables & feature toggles
 ├─ vite.config.ts               # Build configuration
 ├─ tailwind.config.js           # Styling configuration
 ├─ tsconfig.json                # TypeScript configuration
@@ -114,6 +115,21 @@ git clone https://github.com/Roman-Sarchuk/wts-phase_manager.git
 cd wts-phase_manager
 npm install
 ```
+
+### 🎛️ Environment Configuration
+
+The application uses **feature toggles** via environment variables to dynamically control which logos and UI elements are displayed. No external services needed—just update your `.env` file.
+
+```env
+VITE_FEATURE_DICECON_LOGO = true                    # Enable **DiceCon** logo
+VITE_FEATURE_MAISTERNIA_ROLOVYKA_LOGO = false       # Enable **Майстерня Рольовика** logo
+```
+
+These variables are loaded at build time and control the visibility of branding elements. To change which logos appear:
+
+1. Edit `.env`
+2. Restart the dev server or rebuild
+3. The selected logos will now display in the header
 
 ### Development
 
