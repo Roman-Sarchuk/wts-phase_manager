@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import logoWts from "@/assets/logo-wts.png";
 import logoDicecon from "@/assets/logo-dicecon.png";
+import logoMaisterniaRolovyka from "@/assets/logo-maisternia_rolovyka.png";
 import { useGameStore, SPECIAL_PHASES, PHASES } from "@/store/useGameStore";
 import { Play, Pause } from "lucide-react"; // іконки з lucide-react
 import ArrowButton from "@/components/ui/ArrowButton";
@@ -283,11 +284,19 @@ function Header() {
           alt="Logo-WTS"
           className="h-16 w-auto object-contain"
         />
-        <img
+        {import.meta.env.VITE_FEATURE_DICECON_LOGO == "true" && (
+          <img
           src={logoDicecon}
           alt="Logo-Dicecon"
           className="h-16 w-auto object-contain"
-        />
+        />)}
+        {import.meta.env.VITE_FEATURE_MAISTERNIA_ROLOVYKA_LOGO == "true" && (
+          <img
+            src={logoMaisterniaRolovyka}
+            alt="Logo-Maisternia-Rolovyka"
+            className="h-16 w-auto object-contain"
+          />
+        )}
       </div>
 
       {/* round number */}
