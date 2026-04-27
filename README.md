@@ -148,3 +148,10 @@ npm run build
 ## 💾 State & Persistence
 
 This is a purely client-side application. It uses a single Zustand store with a storage key: `wts-phase-storage`. There is no database synchronization; the state is tied to the specific browser instance where it is running.
+
+---
+
+## 🌐 Community & Social
+
+* **Team Instagram:** [![Instagram](https://img.shields.io/badge/@igromany__bez__kordoniv-E4405F?style=flat&logo=instagram&logoColor=white)](https://www.instagram.com/igromany_bez_kordoniv/)
+* **Developer LinkedIn:** [![LinkedIn](https://img.shields.io/badge/Roman_Sarchuk-0A66C2?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/roman-sarchuk-267102323/)
