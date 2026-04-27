@@ -118,7 +118,7 @@ npm install
 
 ### 🎛️ Environment Configuration
 
-The application uses **feature toggles** via environment variables to dynamically control which logos and UI elements are displayed. No external services needed—just update your `.env` file.
+The application uses **feature toggles** via environment variables to dynamically control which logos and UI elements are displayed. No external services needed - just update your `.env` file.
 
 ```env
 VITE_FEATURE_DICECON_LOGO = true                    # Enable **DiceCon** logo
